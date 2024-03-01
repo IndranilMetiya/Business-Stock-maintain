@@ -435,6 +435,14 @@ public class DaoService {
 			
 		}
 		else {
+			PriceTrackerUpdate pTrackerUpdate=new PriceTrackerUpdate();
+			pTrackerUpdate.setCurrentBuyingPrice(pTracker.getCurrentBuyingPrice());
+			pTrackerUpdate.setCurrentSellingPrice(pTracker.getCurrentSellingPrice());
+			pTrackerUpdate.setDate(pTracker.getDate());
+			pTrackerUpdate.setPriceTracker(pTracker);
+			pTrackerUpdate.setPropertyName(pTracker.getProperty().getPropertyName());
+			priceTrackerUpdateRepo.save(pTrackerUpdate);
+			
 		priceTrackerRepo.save(pTracker);
 		return "Price Added succesfully";
 		}
