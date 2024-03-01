@@ -589,6 +589,12 @@ public class DaoService {
 		return pDtos;
 
 	}
+	
+	public List<Customer> getAllCustomer(){
+		
+		List<Customer> customers = customerRepo.findAll();
+		return customers;
+	}
 
 	
 	

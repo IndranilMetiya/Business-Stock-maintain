@@ -14,7 +14,7 @@ public class Customer {
 	@Id
 	@Column(name = "customer_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int transactionId;
+	private int customeId;
 	
 	@Column(name = "name")
 	private String name;
@@ -25,12 +25,14 @@ public class Customer {
 	@Column(name = "address")
 	private String address;
 
-	public int getTransactionId() {
-		return transactionId;
+
+
+	public int getCustomeId() {
+		return customeId;
 	}
 
-	public void setTransactionId(int transactionId) {
-		this.transactionId = transactionId;
+	public void setCustomeId(int customeId) {
+		this.customeId = customeId;
 	}
 
 	public String getName() {
@@ -59,8 +61,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [transactionId=" + transactionId + ", name=" + name + ", phNo=" + phNo + ", address=" + address
-				+ "]";
+		return "Customer [customeId=" + customeId + ", name=" + name + ", phNo=" + phNo + ", address=" + address + "]";
 	}
 	
 	

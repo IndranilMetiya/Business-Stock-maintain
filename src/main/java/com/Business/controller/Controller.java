@@ -20,6 +20,7 @@ import com.Business.DTO.PropertyDTO;
 import com.Business.DTO.StockDTO;
 import com.Business.DTO.SubCategoryDTO;
 import com.Business.DTO.TransactionDTO;
+import com.Business.entity.Customer;
 import com.Business.service.DaoService;
 
 
@@ -129,6 +130,13 @@ public class Controller {
 	   public ResponseEntity<List<PriceTrackerUpdateDTO>> getAllPricesbyProperty(@RequestBody String propertyName) {
 		   List<PriceTrackerUpdateDTO> pList	=  daoService.getAllPricesbyProperty(propertyName);
 		        return ResponseEntity.ok(pList);
+		}
+	   
+	   
+	   @GetMapping("/getAllCustomers")
+	   public ResponseEntity<List<Customer>> getAllPricesbyProperty() {
+		   List<Customer> customers	=  daoService.getAllCustomer();
+		        return ResponseEntity.ok(customers);
 		}
 
 }
