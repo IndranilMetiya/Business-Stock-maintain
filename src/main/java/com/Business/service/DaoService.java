@@ -328,7 +328,79 @@ public class DaoService {
 		tData.setRemarks(tDTO.getRemarks());
 		tData.setCurrentBuyPrice(tDTO.getCurrentBuyPriceFromFE());
 		
+		//transactionDataRepo.save(tData);
+		
+		 tData = new TransactionData();
+		tData.setTransactionType(tDTO.getTransactionType());
+		 property= propertyRepo.findByPropertyName(tDTO.getPropertyName());
+		tData.setProperty(property);
+		
+		tData.setTransactionType(tData.getTransactionType());
+		tData.setQuantity(tDTO.getQuantity());
+		//-------- updating stock----------------
+		String tranActionType1=tData.getTransactionType();
+		 stock= new Stock();
+		stock=stockRepo.findByProperty(property);
+		if (tranActionType1.equalsIgnoreCase("buy") && stock!=null) {
+			stock.setQuantityAvailable(stock.getQuantityAvailable()+tDTO.getQuantity());
+			stockRepo.save(stock);
+		}
+		else if (tranActionType1.equalsIgnoreCase("sell") && stock!=null) {
+			if (stock.getQuantityAvailable()>tDTO.getQuantity()) {
+				stock.setQuantityAvailable(stock.getQuantityAvailable()-tDTO.getQuantity());
+				stockRepo.save(stock);
+			}
+			else {
+				return "NO SUFFICIENT STOCKS TO SELL";
+			}
+		}
+		else if (stock==null) {
+			return "There is an error can't find the property in stocks ";
+		}
+		else {
+			return "Please provide a valid Transaction Type Buy / Sell ";
+		}
+		
+		//---------------------------------------
+		tData.setQuantity(tDTO.getQuantity());
+		tData.setPricePerUnit(tDTO.getPricePerUnit());
+		tData.setDate(tDTO.getDate());
+		//--------	customer detect / add ------
+		if(tDTO.getCustomerPhNo()!=null && !tDTO.getCustomerPhNo().isEmpty() && !tDTO.getCustomerPhNo().isBlank())
+		{
+			Customer customer= new Customer();
+		customer=customerRepo.findByPhNo(tDTO.getCustomerPhNo());
+		if(customer==null) {
+			System.out.println("new Customer, so adding the details to th Database");
+				Customer customer2=new Customer();
+				if (tDTO.getCustomerAddress()!=null && !tDTO.getCustomerAddress().isBlank() && !tDTO.getCustomerAddress().isEmpty()) 
+				{
+					customer2.setAddress(tDTO.getCustomerAddress());
+				}
+				if (tDTO.getCustomerName()!=null && !tDTO.getCustomerName().isBlank() && !tDTO.getCustomerName().isEmpty()) 
+					{
+						customer2.setName(tDTO.getCustomerName());
+					}
+					if (tDTO.getCustomerPhNo()!=null && !tDTO.getCustomerPhNo().isBlank() && !tDTO.getCustomerPhNo().isEmpty()) 
+						{
+							customer2.setPhNo(tDTO.getCustomerPhNo());
+						}
+				customerRepo.save(customer2);
+				tData.setCustomer(customer2);
+			}
+		else {
+			System.out.println("Old customer detected");
+			tData.setCustomer(customer);
+			}
+		}
+		//-----------------------------------------
+		
+		tData.setTransactionIdfromFE(tDTO.getTransactionIdfromFE());
+		tData.setRemarks(tDTO.getRemarks());
+		tData.setCurrentBuyPrice(tDTO.getCurrentBuyPriceFromFE());
+		
 		transactionDataRepo.save(tData);
+		
 		
 		return "Transaction list created sucessfully";
 	
@@ -346,10 +418,12 @@ public class DaoService {
 		Stock stock=stockRepo.findByProperty(property);
 		if(tDTO.getTransactionType().equalsIgnoreCase("Buy")) {
 			stock.setQuantityAvailable(stock.getQuantityAvailable()-tDTO.getQuantity());
+			stockRepo.save(stock);
 			System.out.println("Stocks re-Reduced");
 		}
 		else {
 			stock.setQuantityAvailable(stock.getQuantityAvailable()+tDTO.getQuantity());
+			stockRepo.save(stock);
 			System.out.println("Stocks re-Added");
 		}
 		
@@ -361,7 +435,25 @@ public class DaoService {
 	public String updateTransactionData(TransactionDTO tDTO) {
 
 		
-		deleteTransactionData(tDTO);
+		String propertyName=tDTO.getPropertyName();
+		Property property = propertyRepo.findByPropertyName(propertyName);
+		
+	//	transactionDataRepo.deleteByProperty(property);
+		transactionDataRepo.deleteByTransactionIdfromFE(tDTO.getTransactionIdfromFE());
+		System.out.println("Transactions deleted successfully");
+		Stock stock=stockRepo.findByProperty(property);
+		if(tDTO.getTransactionType().equalsIgnoreCase("Buy")) {
+			stock.setQuantityAvailable(stock.getQuantityAvailable()-tDTO.getQuantity());
+			stockRepo.save(stock);
+			System.out.println("Stocks re-Reduced");
+		}
+		else {
+			stock.setQuantityAvailable(stock.getQuantityAvailable()+tDTO.getQuantity());
+			stockRepo.save(stock);
+			System.out.println("Stocks re-Added");
+		}
+		
+		
 		createTransactionData(tDTO);
 		
 		return"Transaction Data updated sucessfully";
