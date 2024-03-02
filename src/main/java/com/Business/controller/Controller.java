@@ -2,6 +2,7 @@ package com.Business.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -99,6 +100,8 @@ public class Controller {
 	   @CrossOrigin(origins = "*", allowedHeaders = "*")
 	   @PostMapping("/createTransactionData")
 	   public ResponseEntity<String> createTransactionData(@RequestBody TransactionDTO tDTO) {
+		   String transactionId = UUID.randomUUID().toString();
+		   tDTO.setTransactionIdfromFE(transactionId);
 		    String msg	=  daoService.createTransactionData(tDTO);
 		        return ResponseEntity.ok(msg);
 		}
